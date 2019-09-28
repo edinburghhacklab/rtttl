@@ -80,12 +80,12 @@ def parse_data(notes, strict_note_syntax):
 
 
 def correct_note_syntax(note):
-    return re.sub(r'^(\d{0,2})([pbeh]|[cdfga]#?)(\.?)(\d*)$', r'\1\2\4\3', note)
+    return re.sub(r'^(\d{0,2})([pbeh]|[cdfga]#?|[degab]_?)(\.?)(\d*)$', r'\1\2\4\3', note)
 
 
 def parse_note(note_str):
     try:
-        elements = re.findall(r'^(\d{0,2})([pbeh]|[cdfga]#?)(\d?)(\.?)$', note_str)[0]
+        elements = re.findall(r'^(\d{0,2})([pbeh]|[cdfga]#?|[degab]_?)(\d?)(\.?)$', note_str)[0]
         funcs = (parse_duration, parse_pitch, parse_octave, has_dot)
         elements = [func(element) for func, element in zip(funcs, elements)]
     except InvalidElementError as element:
@@ -115,7 +115,7 @@ def parse_bpm(bpm):
 
 
 def parse_pitch(pitch):
-    allowed_pitch = ['p', 'c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'h', 'b']
+    allowed_pitch = ['p', 'c', 'c#', 'd_', 'd', 'd#', 'e_', 'e', 'f', 'f#', 'g_', 'g', 'g#', 'a_', 'a', 'a#', 'b_', 'h', 'b']
     return parse_element(pitch, allowed_pitch)
 
 
@@ -135,22 +135,27 @@ def parse_element(element, allowed):
 def has_dot(dot):
     return dot == '.'
 
-
+#not c f
 def convert_note(note, defaults):
     octave_multiplier = {4: 1, 5: 2, 6: 4, 7: 8}
     pitch_frequencies = {
         'p':  0,
         'c':  261.6,
         'c#': 277.2,
+        'd_': 277.2,
         'd':  293.7,
         'd#': 311.1,
+        'e_': 311.1,
         'e':  329.6,
         'f':  349.2,
         'f#': 370.0,
+        'g_': 370.0,
         'g':  392.0,
         'g#': 415.3,
+        'a_': 415.3,
         'a':  440.0,
         'a#': 466.2,
+        'b_': 466.2,
         'b':  493.9,
         'h':  493.9
     }
